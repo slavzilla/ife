@@ -1,5 +1,10 @@
 import numpy as np
 
+from hfmfmgen import hfmfmgen
+from linfmgen import linfmgen
+from polfmgen import polfmgen
+from sinfmgen import sinfmgen
+
 T=2
 N=256
 
@@ -48,7 +53,7 @@ for trial in range(0, TRIAL):
             x, param, ift, phase = sinfmgen(t)
         elif rt[k] < sum(TIP[:3]):
             tip[k] = 3
-            x, param, ift, phase = polfgmen(t)
+            x, param, ift, phase = polfmgen(t)
         else:
             tip[k] = 4
             x, param, ift, phase = hfmfmgen(t)
