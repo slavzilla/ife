@@ -1,10 +1,8 @@
 import numpy as np
 from hfmfmgen import hfmfmgen
 
-T=2
-N=256
+lol = range(1, 4097)
 
-t = np.linspace(-T/2, T/2 - T/N, N)
 
-x, Param, IFT, Phase = hfmfmgen(t)
-print(IFT)
+res = np.fft.fftshift(np.fft.fft(lol, 512))
+print(res)

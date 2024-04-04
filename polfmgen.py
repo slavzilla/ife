@@ -1,7 +1,6 @@
 import numpy as np
 
 def polfmgen(t):
-    # zamijeniti 0.2551 sa np.random.rand()
     dt = t[1]-t[0]
     wmax = 2 * np.pi * 0.5 / dt
     cm = 64 * np.pi
@@ -10,7 +9,7 @@ def polfmgen(t):
     C = []
     mif = 0
     while r == 1 or (r <= 20 and mif <= wmax):
-        c += [cm * (0.2551 - 0.5)]
+        c += [cm * (np.random.rand() - 0.5)]
         descending_sequence = np.arange(r-1, 0, -1)
         coefficients = c[:r-1] * descending_sequence
         ift = np.polyval(coefficients, t)

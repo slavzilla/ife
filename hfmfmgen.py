@@ -1,7 +1,6 @@
 import numpy as np
 
 def hfmfmgen(t):
-    # zamijeniti 0.2551 sa np.random.rand()
     dt = t[1]-t[0]
     wmax = 2 * np.pi * 0.5 / dt
     cm = 64 * np.pi
@@ -10,7 +9,7 @@ def hfmfmgen(t):
     C = []
     mif = 0
     while r <= 5:
-        c = [cm * (0.2551 - 1/2)] + c
+        c = [cm * (np.random.rand() - 1/2)] + c
         pht = np.polyval(c, t)
         if np.min(pht) < 0:
             c[-1] = c[-1] - np.min(pht) + 0.1
@@ -23,7 +22,7 @@ def hfmfmgen(t):
     pht = np.log(pht)
     ift = np.diff(pht) / dt
     d = np.max(ift) - np.min(ift)
-    scal = (0.2551 * 0.9 + 0.05) * 2 * wmax / d
+    scal = (np.random.rand() * 0.9 + 0.05) * 2 * wmax / d
     phase = scal * np.log(np.real(np.polyval(C, t)))
     a1 = 0
     ift = np.diff(phase) / dt
