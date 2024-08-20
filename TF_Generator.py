@@ -72,22 +72,20 @@ for trial in range(0, TRIAL):
     tz = t[z-1]
     stft = []
 
+    fig, axs = plt.subplots(1, 8, figsize=(32, 8))
+
     kw = -1
     for Nw in NW:
-        kw+=1
+        kw += 1
         STFT = np.zeros((N - Nw, NI), dtype=np.complex64)
         for k in range(Nw//2, N - Nw//2):
             x1 = x[k - Nw//2 : k + Nw//2]
             STFT[k - Nw//2, :] = np.fft.fftshift(np.fft.fft(x1, NI))
-    
-    #     m = np.max(np.abs(STFT), axis=0)  # Maximum values
-    #     a = np.argmax(np.abs(STFT), axis=0)  # Indices of maximum values
 
-    #     fig, axs = plt.subplots(2, 8)  # Create a 2x8 subplot grid
-    #     cax = axs[kw//8, kw%8].pcolor(np.abs(STFT).T, shading='auto')  # Transpose STFT for correct orientation
-    #     fig.colorbar(cax, ax=axs[kw//8, kw%8])  # Add a colorbar
+        cax = axs[kw%8].pcolor(np.abs(STFT).T, shading='auto')
+        axs[kw%8].set_title(f'Nw={Nw}')
+        fig.colorbar(cax, ax=axs[kw%8])
 
-    #     plt.show()
-
-    # input("Press Enter to continue...")
+    plt.savefig(f'tests/pc_{pc}_bc{bc}_rt{rt[0]}.pdf')
+    plt.close(fig)
 
