@@ -1,11 +1,12 @@
 import numpy as np
 
+from data_processing import map_if_to_2d_image, modulate_and_add_noise, normalize_and_map, perform_stft, unify_stfts
 from hfmfmgen import hfmfmgen
 from linfmgen import linfmgen
+from plotting import plot, plot_instantaneous_frequency, plot_stfts
 from polfmgen import polfmgen
 from sinfmgen import sinfmgen
 
-import matplotlib.pyplot as plt
 
 T=2
 N=256
@@ -65,66 +66,21 @@ for trial in range(0, TRIAL):
         x = np.concatenate((X[0][:min(z)], X[1][min(z):max(z)], X[2][max(z):]), axis=None)
         true_if = np.squeeze(np.concatenate((IFT[0][:min(z)], IFT[1][min(z):max(z)], IFT[2][max(z):]), axis=None))
     
-    z = np.random.randint(0, N)
-    ss = np.square(np.random.rand())
-    vv = np.random.rand()
-    x = x * np.exp(-np.square((t - t[z-1])) * np.square(ss)) + vv * (np.random.randn(N) + np.random.randn(N)) / np.sqrt(2)
-    tz = t[z-1]
+    x = modulate_and_add_noise(x, t)
+
+    #tz = t[z-1]
     stft = []
-
-    # plots = len(NW)
-    # rows = 2
-    # columns = (plots + rows - 1) // rows
-    # fig, axs = plt.subplots(rows, columns, figsize=(4 * columns, 4 * rows))
-
-    # kw = -1
-    stfts = []
-    for Nw in NW:
-        # kw += 1
-        STFT = np.zeros((N - Nw, NI), dtype=np.complex64)
-        for k in range(Nw//2, N - Nw//2):
-            x1 = x[k - Nw//2 : k + Nw//2]
-            STFT[k - Nw//2, :] = np.fft.fftshift(np.fft.fft(x1, NI))
-        stfts.append(STFT)
-
-        # row_index = kw // columns
-        # col_index = kw % columns
-        # cax = axs[row_index, col_index].pcolor(np.abs(STFT).T, shading='auto')
-        # axs[row_index, col_index].set_title(f'Nw={Nw}')
-        # fig.colorbar(cax, ax=axs[row_index, col_index])
-
-    # plt.savefig(f'tests/pc_{pc}_bc{bc}_rt{rt[0]}.pdf')
-    # plt.close(fig)
+    stfts = perform_stft(x, NW, N, NI)
+    plot_stfts(stfts, NW)
     
-    max_freq_bins = max(stft.shape[0] for stft in stfts)
-    max_time_frames = max(stft.shape[1] for stft in stfts)
-    num_stfts = len(stfts)
-    unified = np.zeros((max_freq_bins, max_time_frames, num_stfts), dtype=np.complex64)
+    unified_stfts_array = unify_stfts(stfts)
 
-    for idx, stft in enumerate(stfts):
-        pad_freq = (max_freq_bins - stft.shape[0]) // 2
-        pad_time = (max_time_frames - stft.shape[1]) // 2
-        freq_slice = slice(pad_freq, pad_freq + stft.shape[0])
-        time_slice = slice(pad_time, pad_time + stft.shape[1])
+    #plot(true_if)
 
-        unified[freq_slice, time_slice, idx] = stft
+    scaled_true_if = normalize_and_map(true_if, N-1)
+    true_if_2d = map_if_to_2d_image(scaled_true_if, N)
 
-    min_freq = true_if.min()
-    max_freq = true_if.max()
-
-    scaled_true_if = (true_if - min_freq) / (max_freq - min_freq) * (N-1)
-    true_if_2d = np.zeros((N, N))
-    for t in range(N):
-        row_index = int(scaled_true_if[t])
-        true_if_2d[row_index, t] = 1
-
-    # plt.imshow(true_if_2d, cmap='hot', aspect='auto', origin='lower')
-    # plt.colorbar(label='Intensity')
-    # plt.title('Instantaneous Frequency Representation')
-    # plt.xlabel('Time (samples)')
-    # plt.ylabel('Frequency Index')
-    # plt.savefig('test.pdf')
-    # plt.close()
+    plot_instantaneous_frequency(true_if_2d)
 
     break
 
