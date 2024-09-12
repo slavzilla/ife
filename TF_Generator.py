@@ -1,6 +1,7 @@
 import numpy as np
 
-from data_processing import map_if_to_2d_image, modulate_and_add_noise, normalize_and_map, perform_stft, unify_stfts
+from data_processing import calculate_spectrograms, map_if_to_2d_image, modulate_and_add_noise, normalize_and_map, unify_spectrograms
+from dataset import generate_tfrecord_filename, write_tfrecord
 from hfmfmgen import hfmfmgen
 from linfmgen import linfmgen
 from plotting import plot, plot_instantaneous_frequency, plot_stfts
@@ -70,16 +71,20 @@ for trial in range(0, TRIAL):
 
     #tz = t[z-1]
 
-    stfts = perform_stft(x, NW, N, NI)
+    specs = calculate_spectrograms(x, NW, N, NI)
     
-    unified_stfts_array = unify_stfts(stfts)
+    unified_specs = unify_spectrograms(specs)
 
-    #plot(true_if)
+    #plot_stfts(specs, NW)
 
     scaled_true_if = normalize_and_map(true_if, N-1)
     true_if_2d = map_if_to_2d_image(scaled_true_if, N)
 
     #plot_instantaneous_frequency(true_if_2d)
+
+    filename = generate_tfrecord_filename(trial)
+
+    write_tfrecord(filename, unified_specs, true_if_2d)
 
     break
 

@@ -21,6 +21,31 @@ def normalize_and_map(true_if, max_value):
     max_freq = true_if.max()
     return (true_if - min_freq) / (max_freq - min_freq) * max_value
 
+def calculate_spectrograms(x, window_sizes, N, NI):
+    """
+    Calculate the spectrogram (magnitude of STFT) for multiple window sizes.
+
+    Args:
+    x (np.array): The input signal.
+    window_sizes (list): List of window sizes for STFT calculation.
+    N (int): The length of the signal.
+    NI (int): The number of frequency bins.
+
+    Returns:
+    list of np.array: A list containing the spectrogram (magnitude of STFT) for each window size.
+    """
+    spectrograms = []
+    
+    # Reuse perform_stft to calculate the STFT
+    stfts = perform_stft(x, window_sizes, N, NI)
+    
+    # Calculate the magnitude (spectrogram) for each STFT
+    for STFT in stfts:
+        spectrogram = np.abs(STFT)
+        spectrograms.append(spectrogram)
+    
+    return spectrograms
+
 def unify_stfts(stfts):
     """
     Unify a list of STFT matrices into a single 3D numpy array.
@@ -52,6 +77,38 @@ def unify_stfts(stfts):
 
     return unified
 
+def unify_spectrograms(spectrograms):
+    """
+    Unify a list of spectrograms (magnitude of STFTs) into a single 3D numpy array.
+
+    Each spectrogram is zero-padded and centered in the array.
+
+    Args:
+    spectrograms (list of np.array): List of 2D numpy arrays where each array is a spectrogram with potentially different dimensions.
+
+    Returns:
+    np.array: A 3D numpy array where each slice along the third axis is a zero-padded, centered spectrogram.
+    """
+    # Determine the maximum dimensions across all spectrograms
+    max_freq_bins = max(spec.shape[0] for spec in spectrograms)
+    max_time_frames = max(spec.shape[1] for spec in spectrograms)
+    num_spectrograms = len(spectrograms)
+    
+    # Create a unified 3D numpy array (float32, since spectrogram values are real)
+    unified = np.zeros((max_freq_bins, max_time_frames, num_spectrograms), dtype=np.float32)
+
+    # Center and zero-pad each spectrogram in the unified array
+    for idx, spec in enumerate(spectrograms):
+        pad_freq = (max_freq_bins - spec.shape[0]) // 2
+        pad_time = (max_time_frames - spec.shape[1]) // 2
+        freq_slice = slice(pad_freq, pad_freq + spec.shape[0])
+        time_slice = slice(pad_time, pad_time + spec.shape[1])
+
+        # Insert the spectrogram into the zero-padded matrix
+        unified[freq_slice, time_slice, idx] = spec
+
+    return unified
+
 def map_if_to_2d_image(if_arr, N):
     """
     Map an instantaneous frequency array to a 2D representation where each frequency 
@@ -70,7 +127,7 @@ def map_if_to_2d_image(if_arr, N):
     for t in range(N):
         # Calculate the row index for the current time 't' by casting the frequency value to int
         row_index = int(if_arr[t])
-        if_2d[row_index, t] = if_arr[t]
+        if_2d[row_index, t] = 1
 
     return if_2d
 

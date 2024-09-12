@@ -163,3 +163,5 @@ cython_debug/
 tests/.DS_Store
 /.idea
 .DS_Store
+
+*.tfrecord
