@@ -69,9 +69,8 @@ for trial in range(0, TRIAL):
     x = modulate_and_add_noise(x, t)
 
     #tz = t[z-1]
-    stft = []
+
     stfts = perform_stft(x, NW, N, NI)
-    plot_stfts(stfts, NW)
     
     unified_stfts_array = unify_stfts(stfts)
 
@@ -80,7 +79,7 @@ for trial in range(0, TRIAL):
     scaled_true_if = normalize_and_map(true_if, N-1)
     true_if_2d = map_if_to_2d_image(scaled_true_if, N)
 
-    plot_instantaneous_frequency(true_if_2d)
+    #plot_instantaneous_frequency(true_if_2d)
 
     break
 
