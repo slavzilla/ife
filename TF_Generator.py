@@ -86,5 +86,3 @@ for trial in range(0, TRIAL):
 
     write_tfrecord(filename, unified_specs, true_if_2d)
 
-    break
-

@@ -18,14 +18,14 @@ def plot_stfts(stfts, window_sizes):
     plt.savefig('stft_plots.pdf')
     plt.close()
 
-def plot_instantaneous_frequency(true_if_2d):
+def plot_instantaneous_frequency(true_if_2d, path='instantaneous_frequency.pdf'):
     """Plot the 2D map of the instantaneous frequency."""
     plt.imshow(true_if_2d, cmap='hot', aspect='auto', origin='lower')
     plt.colorbar(label='Intensity')
     plt.title('Instantaneous Frequency Representation')
     plt.xlabel('Time (samples)')
     plt.ylabel('Frequency Index')
-    plt.savefig('instantaneous_frequency.pdf')
+    plt.savefig(path)
     plt.close()
 
 def plot(x):
