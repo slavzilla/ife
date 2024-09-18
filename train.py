@@ -8,9 +8,10 @@ def train(train_files=None):
     train_files = ['data/000.tfrecord']
     global step
     step = 0
-    it = create_dataset_iterator(train_files)
+    it = create_dataset_iterator(train_files, True, 1, 1, 1)
     for spectrograms, inst_frq in generator(it):
-        inst_frq = np.squeeze(inst_frq.numpy())
+        print(inst_frq.numpy().shape)
+        print(spectrograms.numpy().shape)
        
 
 
