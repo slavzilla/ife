@@ -1,0 +1,13 @@
+{
+    "type": "DenseNet",
+    "architecture_params":{
+        "initial_filters":64, 
+        "num_dense_blocks":1, 
+        "num_layers_per_block":40, 
+        "num_filters":64, 
+        "squeeze": true,
+        "squeeze_reduction":4,
+        "initializer": "he_normal",
+        "activation": "relu"
+    }
+}

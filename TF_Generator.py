@@ -15,7 +15,7 @@ t = np.linspace(-T/2, T/2 - T/N, N)
 wmax = 2*np.pi/2/(T/N)
 NI = N
 ww = np.arange(-wmax, wmax - 2*wmax/NI, 2*wmax/NI)
-TRIAL = 1000
+TRIAL = 10000
 NW = [4, 8, 16, 20, 24, 32, 48, 64, 96, 128]
 PC = [0.60, 0.30, 0.10]
 TIP = [0.10, 0.30, 0.30, 0.30]
@@ -85,4 +85,6 @@ for trial in range(0, TRIAL):
     filename = generate_tfrecord_filename(trial)
 
     write_tfrecord(filename, unified_specs, true_if_2d)
+
+    print('Successfully created tfrecord:' + filename)
 

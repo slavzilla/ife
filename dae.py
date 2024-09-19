@@ -2,7 +2,6 @@ from tensorflow.keras.layers import Input, Conv2D, Concatenate, MaxPool2D, Conv2
 from tensorflow.keras.initializers import HeNormal, GlorotUniform
 from tensorflow.keras.models import Model
 from keras.activations import sigmoid
-import tensorflow as tf
 
 def double_conv_block(signal, kernel, filters):
     output = Conv2D(filters=filters, kernel_size=kernel, padding='same', kernel_initializer=HeNormal())(signal)
@@ -43,6 +42,8 @@ def create_model(shape=(252, 256, 10)):
     u13 = upsample_block(u12, f1, 5, 16, (1, 2))
 
     u13 = Conv2DTranspose(1, (5, 1), strides=(1, 1), padding='valid')(u13)
+    u13 = BatchNormalization()(u13)
+    u13 = ReLU()(u13)
 
     output = Conv2D(filters=1, kernel_size=3, strides=1, padding='same', kernel_initializer=GlorotUniform())(u13)
     output = BatchNormalization()(output)
